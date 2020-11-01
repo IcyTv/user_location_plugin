@@ -39,6 +39,7 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
   StreamSubscription _locationStatusChangeSubscription;
 
   AnimationController controller;
+  bool isDisposed = false;
 
   @override
   void initState() {
@@ -60,8 +61,11 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
     _locationStatusChangeSubscription?.cancel();
     _onLocationChangedStreamSubscription?.cancel();
     _compassStreamSubscription?.cancel();
-	controller.dispose();
-    super.dispose();
+	if(!isDisposed) {
+		controller.dispose();
+		isDisposed = true;
+	}
+	super.dispose();
   }
 
   @override
@@ -330,6 +334,7 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
     // Create a animation controller that has a duration and a TickerProvider.
     controller = AnimationController(
         duration: const Duration(milliseconds: 500), vsync: vsync);
+		isDisposed = false;
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     Animation<double> animation =
@@ -349,14 +354,20 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
           });
         }
 
-        controller.dispose();
+		if(!isDisposed) {
+			controller.dispose();
+			isDisposed = true;
+		}
       } else if (status == AnimationStatus.dismissed) {
         if (initialStateOfupdateMapLocationOnPositionChange) {
           setState(() {
             widget.options.updateMapLocationOnPositionChange = true;
           });
         }
-        controller.dispose();
+		if(!isDisposed) {
+			controller.dispose();
+			isDisposed = true;
+		}
       }
     });
     controller.forward();
