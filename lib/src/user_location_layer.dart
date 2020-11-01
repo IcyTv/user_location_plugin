@@ -38,6 +38,8 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
   StreamSubscription<double> _compassStreamSubscription;
   StreamSubscription _locationStatusChangeSubscription;
 
+  AnimationController controller;
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +60,7 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
     _locationStatusChangeSubscription?.cancel();
     _onLocationChangedStreamSubscription?.cancel();
     _compassStreamSubscription?.cancel();
+	controller.dispose();
     super.dispose();
   }
 
@@ -325,7 +328,7 @@ class _MapsPluginLayerState extends State<MapsPluginLayer>
     final _zoomTween = Tween<double>(begin: _mapController.zoom, end: destZoom);
 
     // Create a animation controller that has a duration and a TickerProvider.
-    var controller = AnimationController(
+    controller = AnimationController(
         duration: const Duration(milliseconds: 500), vsync: vsync);
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
